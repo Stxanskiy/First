@@ -105,7 +105,7 @@ func calculate(input string) string {
 	}
 	if isRoman {
 		if result < 1 {
-			return "Римские числа не могут быть -1 "
+			return "Римские числа не могут быть меньше 1 "
 		}
 		return intToRoman(result)
 	} else {
