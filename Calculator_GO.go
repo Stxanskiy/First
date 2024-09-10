@@ -114,10 +114,9 @@ func calculate(input string) string {
 }
 
 func main() {
-	// Используем bufio.NewReader для считывания всей строки
 	reader := bufio.NewReader(os.Stdin)
 	fmt.Println("Введите пример?:")
 	input, _ := reader.ReadString('\n')
 	fmt.Println("Результат:", calculate(strings.TrimSpace(input)))
-	defer log.Println("Супер! молодцы")
+	defer log.Println("Супер! Задание завершено.")
 }
