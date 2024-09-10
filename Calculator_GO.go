@@ -87,6 +87,10 @@ func calculate(input string) string {
 	aInt := romanToInt(a)
 	bInt := romanToInt(b)
 
+	if a == "0" || b == "0" {
+		log.Fatal("0 не принимаеться программой")
+	}
+
 	if aInt != -1 && bInt != -1 {
 		isRoman = true
 	} else {
