@@ -73,12 +73,12 @@ func calculate(input string) string {
 	} else if strings.Contains(input, "/") {
 		operator = "/"
 	} else {
-		return "Такакого логического оператора не существует"
+		log.Panic("Такакого логического оператора не существует")
 	}
 
 	parts := strings.Split(input, operator)
 	if len(parts) != 2 {
-		return "Неправильный формат примера"
+		log.Panic("Неправильный формат примера")
 	}
 	a := strings.TrimSpace(parts[0])
 	b := strings.TrimSpace(parts[1])
@@ -86,6 +86,10 @@ func calculate(input string) string {
 	isRoman := false
 	aInt := romanToInt(a)
 	bInt := romanToInt(b)
+
+	if a == "0" || b == "0" {
+		log.Panic("Число не может быть 0")
+	}
 
 	if aInt != -1 && bInt != -1 {
 		isRoman = true
@@ -105,7 +109,7 @@ func calculate(input string) string {
 	}
 	if isRoman {
 		if result < 1 {
-			return "Римские числа не могут быть меньше 1 "
+			log.Panic("Римские числа не могут быть меньше 1 ")
 		}
 		return intToRoman(result)
 	} else {
