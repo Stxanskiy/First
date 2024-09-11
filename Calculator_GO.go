@@ -9,55 +9,36 @@ import (
 	"strings"
 )
 
-func romanToInt(roman string) int {
-	if roman == "I" {
-		return 1
-	} else if roman == "II" {
-		return 2
-	} else if roman == "III" {
-		return 3
-	} else if roman == "IV" {
-		return 4
-	} else if roman == "V" {
-		return 5
-	} else if roman == "VI" {
-		return 6
-	} else if roman == "VII" {
-		return 7
-	} else if roman == "VIII" {
-		return 8
-	} else if roman == "IX" {
-		return 9
-	} else if roman == "X" {
-		return 10
-	} else {
-		return -1
+func romanToInt(roman string) (int, bool) {
+	switch roman {
+	case "I":
+		return 1, true
+	case "II":
+		return 2, true
+	case "III":
+		return 3, true
+	case "IV":
+		return 4, true
+	case "V":
+		return 5, true
+	case "VI":
+		return 6, true
+	case "VII":
+		return 7, true
+	case "VIII":
+		return 8, true
+	case "IX":
+		return 9, true
+	case "X":
+		return 10, true
+	default:
+		return -1, false
 	}
 }
 
-func intToRoman(num int) string {
-	if num == 1 {
-		return "I"
-	} else if num == 2 {
-		return "II"
-	} else if num == 3 {
-		return "III"
-	} else if num == 4 {
-		return "IV"
-	} else if num == 5 {
-		return "V"
-	} else if num == 6 {
-		return "VI"
-	} else if num == 7 {
-		return "VII"
-	} else if num == 8 {
-		return "VIII"
-	} else if num == 9 {
-		return "IX"
-	} else if num == 10 {
-		return "X"
-	} else {
-		return "Ошибка"
+func validateNumberRange(num int) {
+	if num < 1 || num > 10 {
+		log.Panic("Программа принимает на вход числа от 1 до 10")
 	}
 }
 
@@ -73,54 +54,68 @@ func calculate(input string) string {
 	} else if strings.Contains(input, "/") {
 		operator = "/"
 	} else {
-		log.Panic("Такакого логического оператора не существует")
+		log.Panic("Неправильный оператор")
 	}
 
 	parts := strings.Split(input, operator)
 	if len(parts) != 2 {
-		log.Panic("Неправильный формат примера")
+		log.Panic("Такой формат не оддерживаетсяя")
 	}
 	a := strings.TrimSpace(parts[0])
 	b := strings.TrimSpace(parts[1])
 
-	isRoman := false
-	aInt := romanToInt(a)
-	bInt := romanToInt(b)
+	aInt, isRomanA := romanToInt(a)
+	bInt, isRomanB := romanToInt(b)
 
-	if a == "0" || b == "0" {
-		log.Panic("Число не может быть 0")
-	}
+	var aNum, bNum int
 
-	if aInt != -1 && bInt != -1 {
-		isRoman = true
-	} else {
-		aInt, _ = strconv.Atoi(a)
-		bInt, _ = strconv.Atoi(b)
-	}
-	var result int
-	if operator == "+" {
-		result = aInt + bInt
-	} else if operator == "-" {
-		result = aInt - bInt
-	} else if operator == "*" {
-		result = aInt * bInt
-	} else if operator == "/" {
-		result = aInt / bInt
-	}
-	if isRoman {
-		if result < 1 {
-			log.Panic("Римские числа не могут быть меньше 1 ")
+	if isRomanA && isRomanB {
+		aNum = aInt
+		bNum = bInt
+		validateNumberRange(aNum)
+		validateNumberRange(bNum)
+	} else if !isRomanA && !isRomanB {
+		var errA, errB error
+		aNum, errA = strconv.Atoi(a)
+		bNum, errB = strconv.Atoi(b)
+
+		if errA != nil || errB != nil {
+			log.Panic("Числа не распознаны")
 		}
-		return intToRoman(result)
+		validateNumberRange(aNum)
+		validateNumberRange(bNum)
 	} else {
-		return strconv.Itoa(result)
+		log.Panic("сложение арабского и римского числа не поддерживается")
 	}
+
+	var result int
+	switch operator {
+	case "+":
+		result = aNum + bNum
+	case "-":
+		result = aNum - bNum
+	case "*":
+		result = aNum * bNum
+	case "/":
+		if bNum == 0 {
+			log.Panic("Не делиться на ноль ")
+		}
+		result = aNum / bNum
+	default:
+		log.Panic("В школе не учился? такой оператор не поддерживаеться")
+	}
+
+	if isRomanA && (result < 1) {
+		log.Panic("Римские числа -1 не принимаются")
+	}
+
+	return strconv.Itoa(result)
 }
 
 func main() {
 	reader := bufio.NewReader(os.Stdin)
-	fmt.Println("Введите пример?:")
+	fmt.Println("Введи пример:")
 	input, _ := reader.ReadString('\n')
-	fmt.Println("Результат:", calculate(strings.TrimSpace(input)))
-	defer log.Println("Супер! Задание завершено.")
+	fmt.Println("Результат :", calculate(strings.TrimSpace(input)))
+	defer log.Println("Красавчик!")
 }
