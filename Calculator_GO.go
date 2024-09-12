@@ -36,6 +36,29 @@ func romanToInt(roman string) (int, bool) {
 	}
 }
 
+func intToRoman(num int) string {
+	var romanMap = []struct {
+		Value  int
+		Symbol string
+	}{
+		{10, "X"},
+		{9, "IX"},
+		{5, "V"},
+		{4, "IV"},
+		{1, "I"},
+	}
+
+	var result strings.Builder
+
+	for _, entry := range romanMap {
+		for num >= entry.Value {
+			result.WriteString(entry.Symbol)
+			num -= entry.Value
+		}
+	}
+	return result.String()
+}
+
 func validateNumberRange(num int) {
 	if num < 1 || num > 10 {
 		log.Panic("Программа принимает на вход числа от 1 до 10")
@@ -59,7 +82,7 @@ func calculate(input string) string {
 
 	parts := strings.Split(input, operator)
 	if len(parts) != 2 {
-		log.Panic("Такой формат не оддерживаетсяя")
+		log.Panic("Неправильный формат примера")
 	}
 	a := strings.TrimSpace(parts[0])
 	b := strings.TrimSpace(parts[1])
@@ -98,15 +121,18 @@ func calculate(input string) string {
 		result = aNum * bNum
 	case "/":
 		if bNum == 0 {
-			log.Panic("Не делиться на ноль ")
+			log.Panic("Деление на ноль невозможно")
 		}
 		result = aNum / bNum
 	default:
-		log.Panic("В школе не учился? такой оператор не поддерживаеться")
+		log.Panic("Неподдерживаемый оператор")
 	}
 
-	if isRomanA && (result < 1) {
-		log.Panic("Римские числа -1 не принимаются")
+	if isRomanA {
+		if result < 1 {
+			log.Panic("Результат не может быть меньше 1 для римских чисел")
+		}
+		return intToRoman(result)
 	}
 
 	return strconv.Itoa(result)
@@ -114,8 +140,8 @@ func calculate(input string) string {
 
 func main() {
 	reader := bufio.NewReader(os.Stdin)
-	fmt.Println("Введи пример:")
+	fmt.Println("Введите пример:")
 	input, _ := reader.ReadString('\n')
-	fmt.Println("Результат :", calculate(strings.TrimSpace(input)))
+	fmt.Println("Результат:", calculate(strings.TrimSpace(input)))
 	defer log.Println("Красавчик!")
 }
